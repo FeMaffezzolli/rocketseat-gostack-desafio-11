@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image } from 'react-native';
+import { Alert, Image } from 'react-native';
 
 import api from '../../services/api';
 import formatValue from '../../utils/formatValue';
@@ -33,6 +33,17 @@ const Orders: React.FC = () => {
   useEffect(() => {
     async function loadOrders(): Promise<void> {
       // Load orders from API
+      api
+        .get<Food[]>('/orders')
+        .then(res => {
+          setOrders(
+            res.data.map(food => ({
+              ...food,
+              formattedPrice: formatValue(food.price),
+            })),
+          );
+        })
+        .catch(() => Alert.alert('Falha ao carregar pedidos.'));
     }
 
     loadOrders();
